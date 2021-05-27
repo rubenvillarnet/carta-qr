@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
+import {
+  Flex,
+  Box,
+  FormControl,
+  FormLabel,
+  Input,
+  Stack,
+  Button,
+  Heading
+} from '@chakra-ui/react';
 
 import { login } from '../firebase/auth';
 import { useUser } from '../context/userContext';
@@ -39,20 +49,38 @@ export default function IniciarSesionPage() {
   }
 
   return (
-    <div>
-      <h1>Iniciar sesión</h1>
-      {isLoading && <p>Enviando...</p>}
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <label style={{ display: 'block', marginBottom: '1rem' }}>
-          Correo electrónico
-          <input type='email' {...register('email')} />
-        </label>
-        <label style={{ display: 'block', marginBottom: '1rem' }}>
-          Contraseña
-          <input type='password' {...register('password')} />
-        </label>
-        <button type='submit'>Enviar</button>
-      </form>
-    </div>
+    <Flex minH='100vh' align='center' justify='center' bg='gray.50'>
+      <Stack spacing={8} mx='auto' maxW='lg' minW='sm' py={12} px={6}>
+        <Stack align='center'>
+          <Heading fontSize='4xl'>Iniciar sesión</Heading>
+        </Stack>
+        <Box rounded='lg' bg='white' boxShadow='lg' p={8}>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Stack spacing={4}>
+              <FormControl id='email'>
+                <FormLabel>Correo electrónico</FormLabel>
+                <Input type='email' {...register('email')} />
+              </FormControl>
+              <FormControl id='password'>
+                <FormLabel>Contraseña</FormLabel>
+                <Input type='password' {...register('password')} />
+              </FormControl>
+              <Stack spacing={10}>
+                <Button
+                  type='submit'
+                  bg='blue.400'
+                  color='white'
+                  _hover={{
+                    bg: 'blue.500'
+                  }}
+                >
+                  Enviar
+                </Button>
+              </Stack>
+            </Stack>
+          </form>
+        </Box>
+      </Stack>
+    </Flex>
   );
 }

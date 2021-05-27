@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import { Box, Heading, Container, Text, Button, Stack } from '@chakra-ui/react';
 import QRCode from 'qrcode.react';
 import React, { useEffect, useState } from 'react';
 import BusinessCreator from '../components/BusinessCreator/BusinessCreator';
@@ -67,7 +68,7 @@ export default function MiPerfilPage() {
   }
 
   return (
-    <div>
+    <Container maxW='3xl' mt='9'>
       <h1>Mi perfil</h1>
       <p>Nombre: {user?.name}</p>
       <p>Correo electrónico: {user?.email}</p>
@@ -113,6 +114,6 @@ export default function MiPerfilPage() {
       {businessToEdit && (
         <BusinessEditor slug={businessToEdit} handleClose={handleCloseEditor} />
       )}
-    </div>
+    </Container>
   );
 }

@@ -1,44 +1,69 @@
 import React from 'react';
-import Link from 'next/link';
+import NextLink from 'next/link';
+import { Flex, Text, HStack, Button, Box, Link } from '@chakra-ui/react';
+import {
+  HamburgerIcon,
+  CloseIcon,
+  ChevronDownIcon,
+  ChevronRightIcon
+} from '@chakra-ui/icons';
+
 import { logout } from '../../firebase/auth';
 import { useUser } from '../../context/userContext';
 
 export default function NavBar() {
   const { user } = useUser();
+  console.log(user?.name);
 
   const handleLogout = () => {
     logout();
   };
 
   return (
-    <header>
-      {user && <p>Hola, {user.name}</p>}
-      <ul>
-        <li>
-          <Link href='/'>Inicio</Link>
-        </li>
+    <Flex
+      as='nav'
+      justify='space-between'
+      padding={4}
+      borderBottom={1}
+      borderStyle='solid'
+      borderColor='gray.200'
+    >
+      {user ? (
+        <Text color='gray.800'>Hola, {user.name}</Text>
+      ) : (
+        <Link as={NextLink} href='/' color='gray.800' fontSize='2rem'>
+          CartaQR
+        </Link>
+      )}
+      <HStack spacing='1rem'>
         {!user ? (
           <>
-            <li>
-              <Link href='/iniciar-sesion'>Iniciar sesión</Link>
-            </li>
-            <li>
-              <Link href='/registro'>Regístrate</Link>
-            </li>
+            <Text color='gray.800'>
+              <Link as={NextLink} href='/iniciar-sesion'>
+                Iniciar sesión
+              </Link>
+            </Text>
+            <Button bg='blue.400' color='white' _hover={{ bg: 'blue.300' }}>
+              <Link as={NextLink} href='/registro'>
+                Regístrate
+              </Link>
+            </Button>
           </>
         ) : (
           <>
-            <li>
-              <Link href='/mi-perfil'>Mi perfil</Link>
-            </li>
-            <li>
+            <Text color='gray.800'>
+              <Link as={NextLink} href='/mi-perfil'>
+                Mi perfil
+              </Link>
+            </Text>
+            <Text color='red'>
               <button type='button' onClick={handleLogout}>
                 Cerrar sesión
               </button>
-            </li>
+            </Text>
           </>
         )}
-      </ul>
-    </header>
+      </HStack>
+    </Flex>
   );
 }

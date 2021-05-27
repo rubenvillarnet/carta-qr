@@ -136,10 +136,7 @@ export default function BusinessEditor({ slug, handleClose }) {
             </label>
             <label>
               Descripción
-              <textarea
-                type='text'
-                {...register('description', { required: true })}
-              />
+              <textarea type='text' {...register('description')} />
             </label>
             <label>
               Precio
