@@ -5,8 +5,6 @@ import {
   Heading,
   Container,
   Text,
-  Button,
-  Stack,
   Accordion,
   AccordionItem,
   AccordionButton,
@@ -79,7 +77,8 @@ export async function getServerSideProps({ query, res }) {
   res.statusCode = 404;
   return {
     props: {
-      errorCode: 404
+      errorCode: 404,
+      business: {}
     }
   };
 }
