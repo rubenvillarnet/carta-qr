@@ -13,7 +13,6 @@ import { useUser } from '../../context/userContext';
 
 export default function NavBar() {
   const { user } = useUser();
-  console.log(user?.name);
 
   const handleLogout = () => {
     logout();

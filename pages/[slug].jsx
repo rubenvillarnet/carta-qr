@@ -16,7 +16,7 @@ import { firestore } from '../firebase/config';
 import { toSlug } from '../lib/utils';
 
 export default function BusinessPage({ business, errorCode }) {
-  const { name, description, items = {}, categories } = business;
+  const { name, description, items = {}, categories } = business || {};
   if (errorCode) {
     if (errorCode) {
       return <Error statusCode={errorCode} />;

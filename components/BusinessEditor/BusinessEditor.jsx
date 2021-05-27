@@ -1,6 +1,47 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
+import {
+  Drawer,
+  DrawerBody,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  Input,
+  Box,
+  Button,
+  Heading,
+  Tag,
+  TagLabel,
+  TagCloseButton,
+  VStack,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverArrow,
+  PopoverCloseButton,
+  Flex,
+  IconButton,
+  Text,
+  Alert,
+  AlertIcon,
+  Collapse,
+  Select,
+  FormControl,
+  FormLabel,
+  Textarea,
+  NumberInput,
+  NumberInputField,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon
+} from '@chakra-ui/react';
+import { AddIcon, CloseIcon } from '@chakra-ui/icons';
 
 import { firestore, arrayUnion, arrayRemove } from '../../firebase/config';
 import { toSlug } from '../../lib/utils';
@@ -65,51 +106,222 @@ export default function BusinessEditor({ slug, handleClose }) {
     });
     return unsubscribe;
   }, [slug]);
+
   return (
-    <div>
-      <hr />
-      <button type='button' onClick={handleClose}>
-        X
-      </button>
-      <h2>{business.name}</h2>
-      <h4>Categorías</h4>
-      <ul>
-        {business.categories?.map((item) => (
-          <li key={item}>
-            {item}
-            <button type='button' onClick={() => handleRemoveCategory(item)}>
-              X
-            </button>
-          </li>
-        ))}
-      </ul>
-      <div>
-        <input
-          type='text'
-          value={catInput}
-          onChange={(e) => handleCatInputChange(e)}
-        />
-        <button type='button' onClick={handleAddCategory} disabled={!catInput}>
-          Añadir categoría
-        </button>
-        {isRepeated && <p>Ya existe esa categoría</p>}
-      </div>
-      <hr />
-      <h4>Platos</h4>
-      {business.categories?.map((category) => {
-        if (business.items && business.items[toSlug(category)]) {
-          return (
-            <div key={category}>
-              <h5>{category}</h5>
-              {business.items[toSlug(category)].map((item) => (
-                <pre key={item.uuid}>{JSON.stringify(item, null, 2)}</pre>
-              ))}
-            </div>
-          );
-        }
-        return '';
-      })}
-      <hr />
+    <Drawer isOpen={!!slug} placement='right' onClose={handleClose} size='full'>
+      <DrawerOverlay />
+      <DrawerContent>
+        <DrawerCloseButton />
+        <DrawerHeader borderBottom='1px' borderColor='gray.400' pb='2' mb='2'>
+          Editar negocio
+        </DrawerHeader>
+
+        <DrawerBody>
+          <Heading textAlign='center' size='lg' mb='6'>
+            {business.name}
+          </Heading>
+          <Accordion
+            borderWidth='1px'
+            borderRadius='lg'
+            p='4'
+            shadow='lg'
+            mb='6'
+            allowMultiple
+          >
+            <AccordionItem border='none'>
+              <h2>
+                <AccordionButton>
+                  <Box flex='1' textAlign='left'>
+                    Categorías
+                  </Box>
+                  <AccordionIcon />
+                </AccordionButton>
+              </h2>
+              <AccordionPanel pb={4}>
+                <VStack align='start' mb='6'>
+                  {business.categories?.map((item) => (
+                    <Popover>
+                      <PopoverTrigger>
+                        <Tag key={item} size='lg' colorScheme='blue'>
+                          <TagLabel>{item}</TagLabel>
+                          <TagCloseButton />
+                        </Tag>
+                      </PopoverTrigger>
+                      <PopoverContent ml='4'>
+                        <PopoverArrow />
+                        <PopoverCloseButton />
+                        <PopoverHeader color='red'>
+                          Borrar categoría
+                        </PopoverHeader>
+                        <PopoverBody>
+                          <Text mb='2' fontSize='0.9rem'>
+                            ¿Seguro que quieres borrar la categoría? Esto
+                            borrará también todos los platos de esta categoría.
+                          </Text>
+                          <Button
+                            colorScheme='red'
+                            onClick={() => handleRemoveCategory(item)}
+                          >
+                            Borrar
+                          </Button>
+                        </PopoverBody>
+                      </PopoverContent>
+                    </Popover>
+                  ))}
+                </VStack>
+                <Text color='green' fontSize='xs'>
+                  Añadir categoría
+                </Text>
+                <Flex>
+                  <Input
+                    type='text'
+                    value={catInput}
+                    borderTopRightRadius='0'
+                    borderBottomRightRadius='0'
+                    onChange={(e) => handleCatInputChange(e)}
+                    isInvalid={isRepeated}
+                    errorBorderColor='red.300'
+                  />
+                  <IconButton
+                    type='button'
+                    onClick={handleAddCategory}
+                    disabled={!catInput}
+                    colorScheme='green'
+                    borderTopLeftRadius='0'
+                    borderBottomLeftRadius='0'
+                    icon={<AddIcon />}
+                  />
+                </Flex>
+                <Collapse in={isRepeated}>
+                  <Alert status='warning' mt='2'>
+                    <AlertIcon />
+                    Ya existe esa categoría
+                  </Alert>
+                </Collapse>
+              </AccordionPanel>
+            </AccordionItem>
+          </Accordion>
+          {business.categories ? (
+            <Box borderWidth='1px' borderRadius='lg' p='4' shadow='lg' mb='6'>
+              <Heading
+                size='md'
+                as='h3'
+                mb='4'
+                borderBottom='1px'
+                borderColor='gray.400'
+                mx='-4'
+                px='4'
+              >
+                Añadir plato
+              </Heading>
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <FormControl mb='4'>
+                  <FormLabel>Categoría</FormLabel>
+                  <Select
+                    placeholder='selecciona una categoría'
+                    {...register('category', { required: true })}
+                    defaultValue=''
+                  >
+                    {business.categories?.map((category) => (
+                      <option value={category} key={category}>
+                        {category}
+                      </option>
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormControl mb='4'>
+                  <FormLabel>Nombre</FormLabel>
+                  <Input
+                    type='text'
+                    {...register('name', { required: true })}
+                  />
+                </FormControl>
+                <FormControl mb='4'>
+                  <FormLabel>Descripción</FormLabel>
+                  <Textarea type='text' {...register('description')} />
+                </FormControl>
+                <FormControl mb='4'>
+                  <FormLabel>Precio</FormLabel>
+                  <NumberInput precision={2}>
+                    <NumberInputField
+                      {...register('price', { required: true })}
+                    />
+                  </NumberInput>
+                </FormControl>
+                <Button w='100%' colorScheme='green' type='submit'>
+                  Añadir
+                </Button>
+              </form>
+            </Box>
+          ) : (
+            <Alert status='warning' mt='2'>
+              <AlertIcon />
+              Añade alguna categoría primero
+            </Alert>
+          )}
+          <Box borderWidth='1px' borderRadius='lg' p='4' shadow='lg' mb='6'>
+            <Heading
+              size='md'
+              as='h3'
+              mb='4'
+              borderBottom='1px'
+              borderColor='gray.400'
+              mx='-4'
+              px='4'
+            >
+              Platos
+            </Heading>
+            <VStack align='start' mb='6'>
+              {business.categories?.map((category) => {
+                if (business.items && business.items[toSlug(category)]) {
+                  return (
+                    <Box key={category} w='100%' mb='4'>
+                      <Heading size='sm' as='h4' mb='4'>
+                        {category}
+                      </Heading>
+                      {business.items[toSlug(category)].map((item) => (
+                        <Box borderBottom='1px' borderColor='gray.400' mb='4'>
+                          <Flex
+                            justifyContent='space-between'
+                            w='100%'
+                            alignItemss='center'
+                          >
+                            <IconButton
+                              size='xs'
+                              type='button'
+                              colorScheme='red'
+                              icon={<CloseIcon />}
+                              mr='4'
+                            />
+                            <Heading size='sm' as='h5' mb='4' flex='1'>
+                              {item.name}
+                            </Heading>
+                            <Text
+                              fontSize='lg'
+                              color='blue.600'
+                              fontWeight='bold'
+                            >
+                              {item.price}€
+                            </Text>
+                          </Flex>
+                          {item.description && <Text>{item.description}</Text>}
+                        </Box>
+                      ))}
+                    </Box>
+                  );
+                }
+                return null;
+              })}
+            </VStack>
+          </Box>
+          <Button variant='outline' onClick={handleClose}>
+            Cancelar
+          </Button>
+        </DrawerBody>
+      </DrawerContent>
+    </Drawer>
+  );
+  /* return (
       {business.categories ? (
         <div>
           <h4>Añadir plato</h4>
@@ -149,5 +361,5 @@ export default function BusinessEditor({ slug, handleClose }) {
         <p>Añade alguna categoría primero</p>
       )}
     </div>
-  );
+  ); */
 }

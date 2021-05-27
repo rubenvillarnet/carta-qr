@@ -1,10 +1,14 @@
 import Head from 'next/head';
 import { Box, Heading, Container, Text, Button, Stack } from '@chakra-ui/react';
 import Link from 'next/link';
+import Layout from '../components/Layout/Layout';
+import { useUser } from '../context/userContext';
 
 export default function HomePage() {
+  const { user } = useUser();
+
   return (
-    <>
+    <Layout>
       <Head>
         <title>Carta QR</title>
         <meta name='description' content='Carta QR' />
@@ -32,29 +36,31 @@ export default function HomePage() {
             Sólo tienes que crear tu cuenta, añadir los platos de carta,
             descargar el código QR, ¡y listo!
           </Text>
-          <Stack
-            direction='column'
-            spacing={3}
-            align='center'
-            alignSelf='center'
-            position='relative'
-          >
-            <Button
-              colorScheme='blue'
-              bg='blue.400'
-              px={6}
-              _hover={{
-                bg: 'blue.500'
-              }}
+          {!user && (
+            <Stack
+              direction='column'
+              spacing={3}
+              align='center'
+              alignSelf='center'
+              position='relative'
             >
-              <Link href='/registro'>Regístrate</Link>
-            </Button>
-            <Button variant='link' colorScheme='blue' size='sm'>
-              <Link href='/iniciar-sesion'>O inicia sesión</Link>
-            </Button>
-          </Stack>
+              <Button
+                colorScheme='blue'
+                bg='blue.400'
+                px={6}
+                _hover={{
+                  bg: 'blue.500'
+                }}
+              >
+                <Link href='/registro'>Regístrate</Link>
+              </Button>
+              <Button variant='link' colorScheme='blue' size='sm'>
+                <Link href='/iniciar-sesion'>O inicia sesión</Link>
+              </Button>
+            </Stack>
+          )}
         </Stack>
       </Container>
-    </>
+    </Layout>
   );
 }
