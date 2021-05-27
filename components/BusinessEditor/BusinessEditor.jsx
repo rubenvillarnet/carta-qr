@@ -39,7 +39,9 @@ import {
   AccordionItem,
   AccordionButton,
   AccordionPanel,
-  AccordionIcon
+  AccordionIcon,
+  Spinner,
+  Center
 } from '@chakra-ui/react';
 import { AddIcon, CloseIcon } from '@chakra-ui/icons';
 
@@ -50,6 +52,7 @@ export default function BusinessEditor({ slug, handleClose }) {
   const [business, setBusiness] = useState({});
   const [catInput, setCatInput] = useState('');
   const [isRepeated, setIsrepeated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const { register, handleSubmit, reset } = useForm();
 
   const onSubmit = (values) => {
@@ -102,10 +105,25 @@ export default function BusinessEditor({ slug, handleClose }) {
       if (doc.exists) {
         const docData = doc.data();
         setBusiness(docData);
+        setIsLoading(false);
       }
     });
     return unsubscribe;
   }, [slug]);
+
+  if (isLoading) {
+    return (
+      <Center h='100vh'>
+        <Spinner
+          thickness='4px'
+          speed='0.65s'
+          emptyColor='gray.200'
+          color='blue.500'
+          size='xl'
+        />
+      </Center>
+    );
+  }
 
   return (
     <Drawer isOpen={!!slug} placement='right' onClose={handleClose} size='full'>
@@ -280,11 +298,16 @@ export default function BusinessEditor({ slug, handleClose }) {
                         {category}
                       </Heading>
                       {business.items[toSlug(category)].map((item) => (
-                        <Box borderBottom='1px' borderColor='gray.400' mb='4'>
+                        <Box
+                          borderBottom='1px'
+                          borderColor='gray.400'
+                          mb='4'
+                          key={item.uuid}
+                        >
                           <Flex
                             justifyContent='space-between'
                             w='100%'
-                            alignItemss='center'
+                            alignItems='flex-start'
                           >
                             <IconButton
                               size='xs'
@@ -310,7 +333,7 @@ export default function BusinessEditor({ slug, handleClose }) {
                     </Box>
                   );
                 }
-                return null;
+                return <span key={category} />;
               })}
             </VStack>
           </Box>
