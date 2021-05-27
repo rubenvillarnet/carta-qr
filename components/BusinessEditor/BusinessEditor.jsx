@@ -78,6 +78,20 @@ export default function BusinessEditor({ slug, handleClose }) {
     setCatInput(e.target.value);
   };
 
+  const isEmpty = () => {
+    let hasItems = false;
+    business.categories?.forEach((category) => {
+      if (
+        business.items &&
+        business.items[toSlug(category)] &&
+        business.items[toSlug(category)].length
+      ) {
+        hasItems = true;
+      }
+    });
+    return !hasItems;
+  };
+
   const handleAddCategory = () => {
     if (
       business.categories?.find((item) => toSlug(item) === toSlug(catInput))
@@ -94,8 +108,11 @@ export default function BusinessEditor({ slug, handleClose }) {
 
   const handleRemoveCategory = (item) => {
     const docRef = firestore.collection('businesses').doc(slug);
+    const updatedItems = { ...business.items };
+    delete updatedItems[toSlug(item)];
     docRef.update({
-      categories: arrayRemove(item)
+      categories: arrayRemove(item),
+      items: updatedItems
     });
   };
 
@@ -149,7 +166,7 @@ export default function BusinessEditor({ slug, handleClose }) {
               <h2>
                 <AccordionButton>
                   <Box flex='1' textAlign='left'>
-                    Categorías ({business.categories.length})
+                    Categorías ({business?.categories?.length || '0'})
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
@@ -271,74 +288,80 @@ export default function BusinessEditor({ slug, handleClose }) {
               </form>
             </Box>
           ) : (
-            <Alert status='warning' mt='2'>
+            <Alert status='warning' mt='2' mb='6' borderRadius='lg'>
               <AlertIcon />
               Añade alguna categoría primero
             </Alert>
           )}
-          <Box borderWidth='1px' borderRadius='lg' p='4' shadow='lg' mb='6'>
-            <Heading
-              size='md'
-              as='h3'
-              mb='4'
-              borderBottom='1px'
-              borderColor='gray.400'
-              mx='-4'
-              px='4'
-            >
-              Platos
-            </Heading>
-            <VStack align='start' mb='6'>
-              {business.categories?.map((category) => {
-                if (business.items && business.items[toSlug(category)]) {
-                  return (
-                    <Box key={category} w='100%' mb='4'>
-                      <Heading size='sm' as='h4' mb='4'>
-                        {category}
-                      </Heading>
-                      {business.items[toSlug(category)].map((item) => (
-                        <Box
-                          borderBottom='1px'
-                          borderColor='gray.400'
-                          mb='4'
-                          key={item.uuid}
-                        >
-                          <Flex
-                            justifyContent='space-between'
-                            w='100%'
-                            alignItems='flex-start'
+          {!isEmpty() && (
+            <Box borderWidth='1px' borderRadius='lg' p='4' shadow='lg' mb='6'>
+              <Heading
+                size='md'
+                as='h3'
+                mb='4'
+                borderBottom='1px'
+                borderColor='gray.400'
+                mx='-4'
+                px='4'
+              >
+                Platos
+              </Heading>
+              <VStack align='start' mb='6'>
+                {business.categories?.map((category) => {
+                  if (business.items && business.items[toSlug(category)]) {
+                    return (
+                      <Box key={category} w='100%' mb='4'>
+                        <Heading size='sm' as='h4' mb='4'>
+                          {category}
+                        </Heading>
+                        {business.items[toSlug(category)].map((item) => (
+                          <Box
+                            borderBottom='1px'
+                            borderColor='gray.400'
+                            mb='4'
+                            key={item.uuid}
                           >
-                            <IconButton
-                              size='xs'
-                              type='button'
-                              colorScheme='red'
-                              icon={<CloseIcon />}
-                              mr='4'
-                            />
-                            <Heading size='sm' as='h5' mb='4' flex='1'>
-                              {item.name}
-                            </Heading>
-                            <Text
-                              fontSize='lg'
-                              color='blue.600'
-                              fontWeight='bold'
+                            <Flex
+                              justifyContent='space-between'
+                              w='100%'
+                              alignItems='flex-start'
                             >
-                              {item.price}€
-                            </Text>
-                          </Flex>
-                          {item.description && <Text>{item.description}</Text>}
-                        </Box>
-                      ))}
-                    </Box>
-                  );
-                }
-                return <span key={category} />;
-              })}
-            </VStack>
-          </Box>
-          <Button variant='outline' onClick={handleClose}>
-            Cancelar
-          </Button>
+                              <IconButton
+                                size='xs'
+                                type='button'
+                                colorScheme='red'
+                                icon={<CloseIcon />}
+                                mr='4'
+                              />
+                              <Heading size='sm' as='h5' mb='4' flex='1'>
+                                {item.name}
+                              </Heading>
+                              <Text
+                                fontSize='lg'
+                                color='blue.600'
+                                fontWeight='bold'
+                              >
+                                {item.price}€
+                              </Text>
+                            </Flex>
+                            {item.description && (
+                              <Text>{item.description}</Text>
+                            )}
+                          </Box>
+                        ))}
+                      </Box>
+                    );
+                  }
+                  return <span key={category} />;
+                })}
+              </VStack>
+            </Box>
+          )}
+          <Flex justify='flex-end'>
+            <Button variant='outline' onClick={handleClose}>
+              Cancelar
+            </Button>
+          </Flex>
         </DrawerBody>
       </DrawerContent>
     </Drawer>
