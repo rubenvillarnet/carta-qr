@@ -1,6 +1,19 @@
 import React, { useState } from 'react';
+import {
+  Input,
+  Box,
+  Button,
+  Heading,
+  Alert,
+  AlertIcon,
+  Collapse,
+  FormControl,
+  FormLabel,
+  Textarea
+} from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { useUser } from '../../context/userContext';
+
 import { firestore, serverTimestamp } from '../../firebase/config';
 import { toSlug } from '../../lib/utils';
 
@@ -36,21 +49,31 @@ export default function BusinessCreator({ handleAddBusiness }) {
   };
 
   return (
-    <div>
-      <h3>Añade tu negocio</h3>
+    <Box>
+      <Heading as='h3' size='lg' color='blue.500'>
+        Añade tu negocio
+      </Heading>
       {isLoading && <p>Enviando...</p>}
       <form onSubmit={handleSubmit(onSubmit)}>
-        <label>
-          Nombre del negocio
-          <input type='text' {...register('name')} />
-          <textarea {...register('description')} cols='30' rows='10' />
-          <div>
+        <FormControl mb='4'>
+          <FormLabel>Nombre</FormLabel>
+          <Input type='text' {...register('name', { required: true })} />
+        </FormControl>
+        <Collapse in={watchName}>
+          <Alert status='info' mt='2'>
+            <AlertIcon />
             {watchName &&
               `${process.env.NEXT_PUBLIC_HOSTNAME}/${toSlug(watchName)}`}
-          </div>
-          <button type='submit'>Añadir</button>
-        </label>
+          </Alert>
+        </Collapse>
+        <FormControl mb='4'>
+          <FormLabel>Descripción</FormLabel>
+          <Textarea type='text' {...register('description')} />
+        </FormControl>
+        <Button colorScheme='blue' type='submit'>
+          Añadir
+        </Button>
       </form>
-    </div>
+    </Box>
   );
 }

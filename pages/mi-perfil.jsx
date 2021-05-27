@@ -31,7 +31,6 @@ export default function MiPerfilPage() {
   const [businessToEdit, setBusinessToEdit] = useState(null);
   const [businessToRemove, setBusinessToRemove] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     if (!loadingUser && !user) {
@@ -80,6 +79,7 @@ export default function MiPerfilPage() {
       setBusinesses(
         businesses.filter((item) => item.slug !== businessToRemove)
       );
+      handlCloseDeleteModal();
     } catch (error) {
       console.log(error);
     } finally {

@@ -138,17 +138,18 @@ export default function BusinessEditor({ slug, handleClose }) {
           <Heading textAlign='center' size='lg' mb='6'>
             {business.name}
           </Heading>
-          <Accordion mb='6' allowMultiple>
+          <Accordion allowMultiple>
             <AccordionItem
               borderWidth='1px'
               borderRadius='lg'
               p='4'
               shadow='lg'
+              mb='6'
             >
               <h2>
                 <AccordionButton>
                   <Box flex='1' textAlign='left'>
-                    Categorías
+                    Categorías ({business.categories.length})
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
