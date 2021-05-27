@@ -34,9 +34,15 @@ import {
   AccordionPanel,
   AccordionIcon,
   Spinner,
-  Center
+  Center,
+  HStack
 } from '@chakra-ui/react';
-import { AddIcon, CloseIcon } from '@chakra-ui/icons';
+import {
+  AddIcon,
+  CloseIcon,
+  TriangleDownIcon,
+  TriangleUpIcon
+} from '@chakra-ui/icons';
 
 import { firestore, arrayUnion, arrayRemove } from '../../firebase/config';
 import { toSlug } from '../../lib/utils';
@@ -180,19 +186,34 @@ export default function BusinessEditor({ slug, handleClose }) {
               </h2>
               <AccordionPanel pb={4}>
                 <VStack align='start' mb='6'>
-                  {business.categories?.map((item) => (
-                    <DeletePopover
-                      key={item}
-                      title='Borrar categoría'
-                      text='¿Seguro que quieres borrar la categoría? Esto
+                  {business.categories?.map((item, idx) => (
+                    <HStack key={item} spacing='0.5rem'>
+                      <IconButton
+                        size='xs'
+                        type='button'
+                        colorScheme='green'
+                        icon={<TriangleUpIcon />}
+                        disabled={idx === 0}
+                      />
+                      <IconButton
+                        size='xs'
+                        type='button'
+                        colorScheme='green'
+                        icon={<TriangleDownIcon />}
+                        disabled={business.categories.length - 1 === idx}
+                      />
+                      <DeletePopover
+                        title='Borrar categoría'
+                        text='¿Seguro que quieres borrar la categoría? Esto
                             borrará también todos los platos de esta categoría.'
-                      handleDelete={() => handleRemoveCategory(item)}
-                    >
-                      <Tag size='lg' colorScheme='blue'>
-                        <TagLabel>{item}</TagLabel>
-                        <TagCloseButton />
-                      </Tag>
-                    </DeletePopover>
+                        handleDelete={() => handleRemoveCategory(item)}
+                      >
+                        <Tag size='lg' colorScheme='blue' variant='outline'>
+                          <TagLabel>{item}</TagLabel>
+                          <TagCloseButton />
+                        </Tag>
+                      </DeletePopover>
+                    </HStack>
                   ))}
                 </VStack>
                 <Text color='green' fontSize='xs'>
