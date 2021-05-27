@@ -10,7 +10,9 @@ import {
   AccordionItem,
   AccordionButton,
   AccordionPanel,
-  AccordionIcon
+  AccordionIcon,
+  Alert,
+  AlertIcon
 } from '@chakra-ui/react';
 
 import { firestore } from '../firebase/config';
@@ -18,6 +20,17 @@ import { toSlug } from '../lib/utils';
 
 export default function BusinessPage({ business, errorCode }) {
   const { name, description, items = {}, categories } = business || {};
+
+  const isEmpty = () => {
+    let hasItems = false;
+    categories?.forEach((category) => {
+      if (items && items[toSlug(category)] && items[toSlug(category)].length) {
+        hasItems = true;
+      }
+    });
+    return !hasItems;
+  };
+
   if (errorCode) {
     if (errorCode) {
       return <Error statusCode={errorCode} />;
@@ -39,52 +52,55 @@ export default function BusinessPage({ business, errorCode }) {
           {description}
         </Text>
       </Box>
+      {isEmpty && (
+        <Alert status='info' mt='2' mb='6' borderRadius='lg'>
+          <AlertIcon />
+          Este establecimiento aún no ha añadido platos.
+        </Alert>
+      )}
       <Accordion defaultIndex={[0]} allowMultiple>
-        {categories?.map(
-          (category) =>
-            items[toSlug(category)] && (
-              <AccordionItem
-                mb='4'
-                borderWidth='1px'
-                borderRadius='lg'
-                p='4'
-                shadow='lg'
-              >
-                <h2>
-                  <AccordionButton>
-                    <Box flex='1' textAlign='left'>
-                      {category} ({items[toSlug(category)].length})
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                </h2>
-                <AccordionPanel pb={4}>
-                  {items[toSlug(category)].map((item) => (
-                    <Box
-                      borderBottom='1px'
-                      borderColor='gray.400'
-                      mb='4'
-                      pb='4'
+        {categories?.map((category) =>
+          items[toSlug(category)] && items[toSlug(category)].length ? (
+            <AccordionItem
+              mb='4'
+              borderWidth='1px'
+              borderRadius='lg'
+              p='4'
+              shadow='lg'
+              key={category}
+            >
+              <h2>
+                <AccordionButton>
+                  <Box flex='1' textAlign='left'>
+                    {category} ({items[toSlug(category)].length})
+                  </Box>
+                  <AccordionIcon />
+                </AccordionButton>
+              </h2>
+              <AccordionPanel pb={4}>
+                {items[toSlug(category)].map((item) => (
+                  <Box borderBottom='1px' borderColor='gray.400' mb='4' pb='4'>
+                    <Flex
+                      justifyContent='space-between'
+                      w='100%'
+                      alignItems='flex-start'
                     >
-                      <Flex
-                        justifyContent='space-between'
-                        w='100%'
-                        alignItems='flex-start'
-                      >
-                        <Heading fontSize='md'>{item.name}</Heading>
-                        <Text fontSize='lg' color='blue.600' fontWeight='bold'>
-                          {item.price}€
-                        </Text>
-                      </Flex>
+                      <Heading fontSize='md'>{item.name}</Heading>
+                      <Text fontSize='lg' color='blue.600' fontWeight='bold'>
+                        {item.price}€
+                      </Text>
+                    </Flex>
 
-                      {item.description && (
-                        <Text color='gray.400'>{item.description}</Text>
-                      )}
-                    </Box>
-                  ))}
-                </AccordionPanel>
-              </AccordionItem>
-            )
+                    {item.description && (
+                      <Text color='gray.400'>{item.description}</Text>
+                    )}
+                  </Box>
+                ))}
+              </AccordionPanel>
+            </AccordionItem>
+          ) : (
+            <span key={category} />
+          )
         )}
       </Accordion>
     </Container>
