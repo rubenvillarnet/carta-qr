@@ -1,20 +1,20 @@
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { useUser } from "../../context/userContext";
-import { firestore, serverTimestamp } from "../../firebase/config";
-import { toSlug } from "../../lib/utils";
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useUser } from '../../context/userContext';
+import { firestore, serverTimestamp } from '../../firebase/config';
+import { toSlug } from '../../lib/utils';
 
 export default function BusinessCreator({ handleAddBusiness }) {
   const { register, handleSubmit, reset, watch } = useForm();
   const { user } = useUser();
   const [isLoading, setIsLoading] = useState(false);
 
-  const watchName = watch("name");
+  const watchName = watch('name');
 
   const onSubmit = async (values) => {
     setIsLoading(true);
     const { name, description } = values;
-    const ref = firestore.collection("businesses").doc(toSlug(name));
+    const ref = firestore.collection('businesses').doc(toSlug(name));
     const data = {
       name,
       description,
@@ -22,7 +22,7 @@ export default function BusinessCreator({ handleAddBusiness }) {
       uid: user.uid,
       items: {},
       createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
     };
     try {
       await ref.set(data);
@@ -42,13 +42,13 @@ export default function BusinessCreator({ handleAddBusiness }) {
       <form onSubmit={handleSubmit(onSubmit)}>
         <label>
           Nombre del negocio
-          <input type="text" {...register("name")} />
-          <textarea {...register("description")} cols="30" rows="10"></textarea>
+          <input type='text' {...register('name')} />
+          <textarea {...register('description')} cols='30' rows='10' />
           <div>
             {watchName &&
               `${process.env.NEXT_PUBLIC_HOSTNAME}/${toSlug(watchName)}`}
           </div>
-          <button type="submit">Añadir</button>
+          <button type='submit'>Añadir</button>
         </label>
       </form>
     </div>

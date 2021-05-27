@@ -1,4 +1,4 @@
-import { firestore } from "./config";
+import { firestore } from './config';
 
 export const createUserDocument = async (user) => {
   // get a reference to the Firestore documento
@@ -8,7 +8,7 @@ export const createUserDocument = async (user) => {
   const userProfile = {
     uid: user.uid,
     email: user.email,
-    name: user.displayName,
+    name: user.displayName
   };
 
   // write to Cloud Firestore

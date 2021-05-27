@@ -1,5 +1,5 @@
-import NavBar from "../components/NavBar/NavBar";
-import UserProvider from "../context/userContext";
+import NavBar from '../components/NavBar/NavBar';
+import UserProvider from '../context/userContext';
 
 function MyApp({ Component, pageProps }) {
   return (

@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useRouter } from "next/router";
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/router';
 
-import { login } from "../firebase/auth";
-import { useUser } from "../context/userContext";
+import { login } from '../firebase/auth';
+import { useUser } from '../context/userContext';
 
 export default function IniciarSesionPage() {
   const { register, handleSubmit, reset } = useForm();
@@ -13,14 +13,14 @@ export default function IniciarSesionPage() {
 
   const onSubmit = async (values) => {
     setIsLoading(true);
-    let user;
+    let Data;
     try {
-      user = await login(values);
+      Data = await login(values);
       reset();
     } catch (error) {
       console.log(error);
     }
-    if (user.uid) {
+    if (Data.uid) {
       setLoadingUser(true);
       router.push(`/mi-perfil`);
     } else {
@@ -30,9 +30,9 @@ export default function IniciarSesionPage() {
 
   useEffect(() => {
     if (!loadingUser && user) {
-      router.push("/mi-perfil");
+      router.push('/mi-perfil');
     }
-  }, [loadingUser, user]);
+  }, [loadingUser, user, router]);
 
   if (loadingUser) {
     return <p>Cargando...</p>;
@@ -43,15 +43,15 @@ export default function IniciarSesionPage() {
       <h1>Iniciar sesión</h1>
       {isLoading && <p>Enviando...</p>}
       <form onSubmit={handleSubmit(onSubmit)}>
-        <label style={{ display: "block", marginBottom: "1rem" }}>
+        <label style={{ display: 'block', marginBottom: '1rem' }}>
           Correo electrónico
-          <input type="email" {...register("email")} />
+          <input type='email' {...register('email')} />
         </label>
-        <label style={{ display: "block", marginBottom: "1rem" }}>
+        <label style={{ display: 'block', marginBottom: '1rem' }}>
           Contraseña
-          <input type="password" {...register("password")} />
+          <input type='password' {...register('password')} />
         </label>
-        <button type="submit">Enviar</button>
+        <button type='submit'>Enviar</button>
       </form>
     </div>
   );

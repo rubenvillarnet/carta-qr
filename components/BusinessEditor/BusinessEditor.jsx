@@ -1,30 +1,30 @@
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { v4 as uuidv4 } from "uuid";
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { v4 as uuidv4 } from 'uuid';
 
-import { firestore, arrayUnion, arrayRemove } from "../../firebase/config";
-import { toSlug } from "../../lib/utils";
+import { firestore, arrayUnion, arrayRemove } from '../../firebase/config';
+import { toSlug } from '../../lib/utils';
 
 export default function BusinessEditor({ slug, handleClose }) {
   const [business, setBusiness] = useState({});
-  const [catInput, setCatInput] = useState("");
+  const [catInput, setCatInput] = useState('');
   const [isRepeated, setIsrepeated] = useState(false);
-  const { register, handleSubmit, reset, watch } = useForm();
+  const { register, handleSubmit, reset } = useForm();
 
   const onSubmit = (values) => {
     const { category, ...rest } = values;
     const newItem = {
       ...rest,
-      uuid: uuidv4(),
+      uuid: uuidv4()
     };
     const updatedItems = { ...business.items };
     updatedItems[toSlug(category)] =
       business.items && business.items[toSlug(category)]
         ? [...business.items[toSlug(category)], newItem]
         : [newItem];
-    const docRef = firestore.collection("businesses").doc(slug);
+    const docRef = firestore.collection('businesses').doc(slug);
     docRef.update({
-      items: updatedItems,
+      items: updatedItems
     });
     reset();
   };
@@ -41,53 +41,55 @@ export default function BusinessEditor({ slug, handleClose }) {
       setIsrepeated(true);
       return;
     }
-    const docRef = firestore.collection("businesses").doc(slug);
+    const docRef = firestore.collection('businesses').doc(slug);
     docRef.update({
-      categories: arrayUnion(catInput),
+      categories: arrayUnion(catInput)
     });
-    setCatInput("");
+    setCatInput('');
   };
 
   const handleRemoveCategory = (item) => {
-    const docRef = firestore.collection("businesses").doc(slug);
+    const docRef = firestore.collection('businesses').doc(slug);
     docRef.update({
-      categories: arrayRemove(item),
+      categories: arrayRemove(item)
     });
   };
 
   useEffect(() => {
-    const docRef = firestore.collection("businesses").doc(slug);
+    const docRef = firestore.collection('businesses').doc(slug);
     const unsubscribe = docRef.onSnapshot((doc) => {
       if (doc.exists) {
         const docData = doc.data();
         setBusiness(docData);
       }
     });
-    return () => {
-      unsubscribe;
-    };
-  }, []);
+    return unsubscribe;
+  }, [slug]);
   return (
     <div>
       <hr />
-      <button onClick={handleClose}>X</button>
+      <button type='button' onClick={handleClose}>
+        X
+      </button>
       <h2>{business.name}</h2>
       <h4>Categorías</h4>
       <ul>
         {business.categories?.map((item) => (
           <li key={item}>
             {item}
-            <button onClick={() => handleRemoveCategory(item)}>X</button>
+            <button type='button' onClick={() => handleRemoveCategory(item)}>
+              X
+            </button>
           </li>
         ))}
       </ul>
       <div>
         <input
-          type="text"
+          type='text'
           value={catInput}
           onChange={(e) => handleCatInputChange(e)}
         />
-        <button onClick={handleAddCategory} disabled={!catInput}>
+        <button type='button' onClick={handleAddCategory} disabled={!catInput}>
           Añadir categoría
         </button>
         {isRepeated && <p>Ya existe esa categoría</p>}
@@ -105,7 +107,7 @@ export default function BusinessEditor({ slug, handleClose }) {
             </div>
           );
         }
-        return "";
+        return '';
       })}
       <hr />
       {business.categories ? (
@@ -115,10 +117,10 @@ export default function BusinessEditor({ slug, handleClose }) {
             <label>
               Categoría
               <select
-                {...register("category", { required: true })}
-                defaultValue=""
+                {...register('category', { required: true })}
+                defaultValue=''
               >
-                <option disabled value="">
+                <option disabled value=''>
                   selecciona una categoría
                 </option>
                 {business.categories?.map((category) => (
@@ -130,20 +132,20 @@ export default function BusinessEditor({ slug, handleClose }) {
             </label>
             <label>
               Nombre
-              <input type="text" {...register("name", { required: true })} />
+              <input type='text' {...register('name', { required: true })} />
             </label>
             <label>
               Descripción
               <textarea
-                type="text"
-                {...register("description", { required: true })}
+                type='text'
+                {...register('description', { required: true })}
               />
             </label>
             <label>
               Precio
-              <input type="number" {...register("price", { required: true })} />
+              <input type='number' {...register('price', { required: true })} />
             </label>
-            <button type="submit">Añadir</button>
+            <button type='submit'>Añadir</button>
           </form>
         </div>
       ) : (

@@ -1,10 +1,10 @@
-import { useRouter } from "next/router";
-import QRCode from "qrcode.react";
-import React, { useEffect, useState } from "react";
-import BusinessCreator from "../components/BusinessCreator/BusinessCreator";
-import BusinessEditor from "../components/BusinessEditor/BusinessEditor";
-import { useUser } from "../context/userContext";
-import { firestore } from "../firebase/config";
+import { useRouter } from 'next/router';
+import QRCode from 'qrcode.react';
+import React, { useEffect, useState } from 'react';
+import BusinessCreator from '../components/BusinessCreator/BusinessCreator';
+import BusinessEditor from '../components/BusinessEditor/BusinessEditor';
+import { useUser } from '../context/userContext';
+import { firestore } from '../firebase/config';
 
 export default function MiPerfilPage() {
   const { user, loadingUser } = useUser();
@@ -15,24 +15,27 @@ export default function MiPerfilPage() {
 
   useEffect(() => {
     if (!loadingUser && !user) {
-      router.push("/iniciar-sesion");
+      router.push('/iniciar-sesion');
     }
-  }, [loadingUser, user]);
+  }, [loadingUser, user, router]);
 
-  useEffect(async () => {
-    if (user) {
-      const ref = firestore
-        .collection("businesses")
-        .where("uid", "==", user.uid);
-      try {
-        const response = (await ref.get()).docs.map((doc) => doc.data());
-        setBusinesses(response);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
+  useEffect(() => {
+    async function getBusinesess() {
+      if (user) {
+        const ref = firestore
+          .collection('businesses')
+          .where('uid', '==', user.uid);
+        try {
+          const response = (await ref.get()).docs.map((doc) => doc.data());
+          setBusinesses(response);
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setIsLoading(false);
+        }
       }
     }
+    getBusinesess();
   }, [user]);
 
   const handleAddBusiness = (newBusiness) => {
@@ -50,7 +53,7 @@ export default function MiPerfilPage() {
   const handleRemoveBusiness = async (slug) => {
     setIsLoading(true);
     try {
-      await firestore.collection("businesses").doc(slug).delete();
+      await firestore.collection('businesses').doc(slug).delete();
       setBusinesses(businesses.filter((item) => item.slug !== slug));
     } catch (error) {
       console.log(error);
@@ -75,7 +78,8 @@ export default function MiPerfilPage() {
             <p>
               <a
                 href={`${process.env.NEXT_PUBLIC_HOSTNAME}/${item.slug}`}
-                target="_blank"
+                target='_blank'
+                rel='noreferrer'
               >
                 {process.env.NEXT_PUBLIC_HOSTNAME}/{item.slug}
               </a>
@@ -87,10 +91,16 @@ export default function MiPerfilPage() {
             <p>{item.description}</p>
             {!businessToEdit && (
               <div>
-                <button onClick={() => handleEditBusiness(item.slug)}>
+                <button
+                  type='button'
+                  onClick={() => handleEditBusiness(item.slug)}
+                >
                   Editar
                 </button>
-                <button onClick={() => handleRemoveBusiness(item.slug)}>
+                <button
+                  type='button'
+                  onClick={() => handleRemoveBusiness(item.slug)}
+                >
                   X
                 </button>
               </div>

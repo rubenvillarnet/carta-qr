@@ -1,5 +1,5 @@
-import { useState, useEffect, createContext, useContext } from "react";
-import { firestore, auth } from "../firebase/config";
+import { useState, useEffect, createContext, useContext } from 'react';
+import { firestore, auth } from '../firebase/config';
 
 export const UserContext = createContext();
 
@@ -8,10 +8,10 @@ export default function UserContextComp({ children }) {
   const [loadingUser, setLoadingUser] = useState(true);
 
   useEffect(() => {
-    const unsubscriber = auth.onAuthStateChanged(async (user) => {
+    const unsubscriber = auth.onAuthStateChanged(async (Data) => {
       try {
-        if (user) {
-          const { uid } = user;
+        if (Data) {
+          const { uid } = Data;
           const userDoc = await firestore.doc(`users/${uid}`).get();
           const { name, email } = userDoc.data();
           if (name && email) {

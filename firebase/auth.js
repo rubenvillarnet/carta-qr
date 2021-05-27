@@ -1,5 +1,5 @@
-import { auth } from "./config";
-import { createUserDocument } from "./user";
+import { auth } from './config';
+import { createUserDocument } from './user';
 
 export const signup = async ({ name, email, password }) => {
   const resp = await auth.createUserWithEmailAndPassword(email, password);
@@ -9,9 +9,7 @@ export const signup = async ({ name, email, password }) => {
   return user;
 };
 
-export const logout = () => {
-  return auth.signOut();
-};
+export const logout = () => auth.signOut();
 
 export const login = async ({ email, password }) => {
   const resp = await auth.signInWithEmailAndPassword(email, password);

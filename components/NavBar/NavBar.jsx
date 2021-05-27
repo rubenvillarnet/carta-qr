@@ -1,7 +1,7 @@
-import React from "react";
-import Link from "next/link";
-import { logout } from "../../firebase/auth";
-import { useUser } from "../../context/userContext";
+import React from 'react';
+import Link from 'next/link';
+import { logout } from '../../firebase/auth';
+import { useUser } from '../../context/userContext';
 
 export default function NavBar() {
   const { user } = useUser();
@@ -15,24 +15,26 @@ export default function NavBar() {
       {user && <p>Hola, {user.name}</p>}
       <ul>
         <li>
-          <Link href="/">Inicio</Link>
+          <Link href='/'>Inicio</Link>
         </li>
         {!user ? (
           <>
             <li>
-              <Link href="/iniciar-sesion">Iniciar sesión</Link>
+              <Link href='/iniciar-sesion'>Iniciar sesión</Link>
             </li>
             <li>
-              <Link href="/registro">Regístrate</Link>
+              <Link href='/registro'>Regístrate</Link>
             </li>
           </>
         ) : (
           <>
             <li>
-              <Link href="/mi-perfil">Mi perfil</Link>
+              <Link href='/mi-perfil'>Mi perfil</Link>
             </li>
             <li>
-              <span onClick={handleLogout}>Cerrar sesión</span>
+              <button type='button' onClick={handleLogout}>
+                Cerrar sesión
+              </button>
             </li>
           </>
         )}

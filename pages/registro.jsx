@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useRouter } from "next/router";
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/router';
 
-import { signup } from "../firebase/auth";
-import { useUser } from "../context/userContext";
+import { signup } from '../firebase/auth';
+import { useUser } from '../context/userContext';
 
 export default function RegistroPage() {
   const { register, handleSubmit, reset } = useForm();
@@ -25,7 +25,7 @@ export default function RegistroPage() {
       setUser({
         uid,
         email,
-        name: displayName,
+        name: displayName
       });
       router.push(`/mi-perfil`);
     } else {
@@ -35,9 +35,9 @@ export default function RegistroPage() {
 
   useEffect(() => {
     if (!loadingUser && user) {
-      router.push("/mi-perfil");
+      router.push('/mi-perfil');
     }
-  }, [loadingUser, user]);
+  }, [loadingUser, user, router]);
 
   if (loadingUser) {
     return <p>Cargando...</p>;
@@ -48,19 +48,19 @@ export default function RegistroPage() {
       <h1>Regístrate</h1>
       {isLoading && <p>Enviando...</p>}
       <form onSubmit={handleSubmit(onSubmit)}>
-        <label style={{ display: "block", marginBottom: "1rem" }}>
+        <label style={{ display: 'block', marginBottom: '1rem' }}>
           Nombre
-          <input type="text" {...register("name")} />
+          <input type='text' {...register('name')} />
         </label>
-        <label style={{ display: "block", marginBottom: "1rem" }}>
+        <label style={{ display: 'block', marginBottom: '1rem' }}>
           Correo electrónico
-          <input type="email" {...register("email")} />
+          <input type='email' {...register('email')} />
         </label>
-        <label style={{ display: "block", marginBottom: "1rem" }}>
+        <label style={{ display: 'block', marginBottom: '1rem' }}>
           Contraseña
-          <input type="password" {...register("password")} />
+          <input type='password' {...register('password')} />
         </label>
-        <button type="submit">Enviar</button>
+        <button type='submit'>Enviar</button>
       </form>
     </div>
   );

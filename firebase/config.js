@@ -1,6 +1,7 @@
-import firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/firestore";
+/* eslint-disable import/no-extraneous-dependencies */
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/firestore';
 
 const credentials = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -8,7 +9,7 @@ const credentials = {
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
 if (!firebase.apps.length) {
@@ -17,6 +18,6 @@ if (!firebase.apps.length) {
 
 export const auth = firebase.auth();
 export const firestore = firebase.firestore();
-export const serverTimestamp = firebase.firestore.FieldValue.serverTimestamp;
-export const arrayUnion = firebase.firestore.FieldValue.arrayUnion;
-export const arrayRemove = firebase.firestore.FieldValue.arrayRemove;
+export const { serverTimestamp } = firebase.firestore.FieldValue;
+export const { arrayUnion } = firebase.firestore.FieldValue;
+export const { arrayRemove } = firebase.firestore.FieldValue;
