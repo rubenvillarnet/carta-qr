@@ -16,13 +16,6 @@ import {
   TagLabel,
   TagCloseButton,
   VStack,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  PopoverArrow,
-  PopoverCloseButton,
   Flex,
   IconButton,
   Text,
@@ -47,6 +40,7 @@ import { AddIcon, CloseIcon } from '@chakra-ui/icons';
 
 import { firestore, arrayUnion, arrayRemove } from '../../firebase/config';
 import { toSlug } from '../../lib/utils';
+import DeletePopover from '../DeletePopover/DeletePopover';
 
 export default function BusinessEditor({ slug, handleClose }) {
   const [business, setBusiness] = useState({});
@@ -116,6 +110,19 @@ export default function BusinessEditor({ slug, handleClose }) {
     });
   };
 
+  const handleDeleteItem = (category, uuid) => {
+    console.log({ category, uuid });
+    const updatedItems = { ...business.items };
+    const updatedCategory = updatedItems[toSlug(category)].filter(
+      (item) => item.uuid !== uuid
+    );
+    updatedItems[toSlug(category)] = updatedCategory;
+    const docRef = firestore.collection('businesses').doc(slug);
+    docRef.update({
+      items: updatedItems
+    });
+  };
+
   useEffect(() => {
     const docRef = firestore.collection('businesses').doc(slug);
     const unsubscribe = docRef.onSnapshot((doc) => {
@@ -174,33 +181,18 @@ export default function BusinessEditor({ slug, handleClose }) {
               <AccordionPanel pb={4}>
                 <VStack align='start' mb='6'>
                   {business.categories?.map((item) => (
-                    <Popover>
-                      <PopoverTrigger>
-                        <Tag key={item} size='lg' colorScheme='blue'>
-                          <TagLabel>{item}</TagLabel>
-                          <TagCloseButton />
-                        </Tag>
-                      </PopoverTrigger>
-                      <PopoverContent ml='4'>
-                        <PopoverArrow />
-                        <PopoverCloseButton />
-                        <PopoverHeader color='red'>
-                          Borrar categoría
-                        </PopoverHeader>
-                        <PopoverBody>
-                          <Text mb='2' fontSize='0.9rem'>
-                            ¿Seguro que quieres borrar la categoría? Esto
-                            borrará también todos los platos de esta categoría.
-                          </Text>
-                          <Button
-                            colorScheme='red'
-                            onClick={() => handleRemoveCategory(item)}
-                          >
-                            Borrar
-                          </Button>
-                        </PopoverBody>
-                      </PopoverContent>
-                    </Popover>
+                    <DeletePopover
+                      key={item}
+                      title='Borrar categoría'
+                      text='¿Seguro que quieres borrar la categoría? Esto
+                            borrará también todos los platos de esta categoría.'
+                      handleDelete={() => handleRemoveCategory(item)}
+                    >
+                      <Tag size='lg' colorScheme='blue'>
+                        <TagLabel>{item}</TagLabel>
+                        <TagCloseButton />
+                      </Tag>
+                    </DeletePopover>
                   ))}
                 </VStack>
                 <Text color='green' fontSize='xs'>
@@ -326,13 +318,21 @@ export default function BusinessEditor({ slug, handleClose }) {
                               w='100%'
                               alignItems='flex-start'
                             >
-                              <IconButton
-                                size='xs'
-                                type='button'
-                                colorScheme='red'
-                                icon={<CloseIcon />}
-                                mr='4'
-                              />
+                              <DeletePopover
+                                title='Borrar plato'
+                                text='¿Seguro que quieres borrar este plato?'
+                                handleDelete={() =>
+                                  handleDeleteItem(category, item.uuid)
+                                }
+                              >
+                                <IconButton
+                                  size='xs'
+                                  type='button'
+                                  colorScheme='red'
+                                  icon={<CloseIcon />}
+                                  mr='4'
+                                />
+                              </DeletePopover>
                               <Heading size='sm' as='h5' mb='4' flex='1'>
                                 {item.name}
                               </Heading>
@@ -366,45 +366,4 @@ export default function BusinessEditor({ slug, handleClose }) {
       </DrawerContent>
     </Drawer>
   );
-  /* return (
-      {business.categories ? (
-        <div>
-          <h4>Añadir plato</h4>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <label>
-              Categoría
-              <select
-                {...register('category', { required: true })}
-                defaultValue=''
-              >
-                <option disabled value=''>
-                  selecciona una categoría
-                </option>
-                {business.categories?.map((category) => (
-                  <option value={category} key={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Nombre
-              <input type='text' {...register('name', { required: true })} />
-            </label>
-            <label>
-              Descripción
-              <textarea type='text' {...register('description')} />
-            </label>
-            <label>
-              Precio
-              <input type='number' {...register('price', { required: true })} />
-            </label>
-            <button type='submit'>Añadir</button>
-          </form>
-        </div>
-      ) : (
-        <p>Añade alguna categoría primero</p>
-      )}
-    </div>
-  ); */
 }
