@@ -2,6 +2,7 @@ import React from 'react';
 import Error from 'next/error';
 import {
   Box,
+  Flex,
   Heading,
   Container,
   Text,
@@ -23,22 +24,32 @@ export default function BusinessPage({ business, errorCode }) {
     }
   }
   return (
-    <Container maxW='3xl' mt='9'>
-      <Heading
-        fontWeight={600}
-        fontSize={{ base: 'xl', sm: '2xl', md: '4xl' }}
-        lineHeight='150%'
-      >
-        {name}
-      </Heading>
-      <Text color='gray.700' mb={9}>
-        {description}
-      </Text>
+    <Container maxW='3xl' mt='2'>
+      <Box bg='green.400' p='4' mb='6' borderRadius='lg'>
+        <Heading
+          fontWeight={600}
+          fontSize='2xl'
+          lineHeight='150%'
+          textAlign='center'
+          color='white'
+        >
+          {name}
+        </Heading>
+        <Text color='white' textAlign='center'>
+          {description}
+        </Text>
+      </Box>
       <Accordion defaultIndex={[0]} allowMultiple>
         {categories?.map(
           (category) =>
             items[toSlug(category)] && (
-              <AccordionItem>
+              <AccordionItem
+                mb='4'
+                borderWidth='1px'
+                borderRadius='lg'
+                p='4'
+                shadow='lg'
+              >
                 <h2>
                   <AccordionButton>
                     <Box flex='1' textAlign='left'>
@@ -49,10 +60,26 @@ export default function BusinessPage({ business, errorCode }) {
                 </h2>
                 <AccordionPanel pb={4}>
                   {items[toSlug(category)].map((item) => (
-                    <Box>
-                      <Heading fontSize='sm'>{item.name}</Heading>
-                      <Text>{item.price}€</Text>
-                      {item.description && <Text>{item.description}</Text>}
+                    <Box
+                      borderBottom='1px'
+                      borderColor='gray.400'
+                      mb='4'
+                      pb='4'
+                    >
+                      <Flex
+                        justifyContent='space-between'
+                        w='100%'
+                        alignItems='flex-start'
+                      >
+                        <Heading fontSize='md'>{item.name}</Heading>
+                        <Text fontSize='lg' color='blue.600' fontWeight='bold'>
+                          {item.price}€
+                        </Text>
+                      </Flex>
+
+                      {item.description && (
+                        <Text color='gray.400'>{item.description}</Text>
+                      )}
                     </Box>
                   ))}
                 </AccordionPanel>
