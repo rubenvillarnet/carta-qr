@@ -39,7 +39,7 @@ import {
 } from '@chakra-ui/react';
 import {
   AddIcon,
-  CloseIcon,
+  DeleteIcon,
   TriangleDownIcon,
   TriangleUpIcon
 } from '@chakra-ui/icons';
@@ -288,7 +288,7 @@ export default function BusinessEditor({ slug, handleClose }) {
                   <Textarea type='text' {...register('description')} />
                 </FormControl>
                 <FormControl mb='4'>
-                  <FormLabel>Precio</FormLabel>
+                  <FormLabel>Precio €</FormLabel>
                   <NumberInput precision={2}>
                     <NumberInputField
                       {...register('price', { required: true })}
@@ -350,7 +350,7 @@ export default function BusinessEditor({ slug, handleClose }) {
                                   size='xs'
                                   type='button'
                                   colorScheme='red'
-                                  icon={<CloseIcon />}
+                                  icon={<DeleteIcon />}
                                   mr='4'
                                 />
                               </DeletePopover>
